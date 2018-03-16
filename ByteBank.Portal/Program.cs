@@ -11,9 +11,11 @@ namespace ByteBank.Portal
     {
         static void Main(string[] args)
         {
-            var prefixos = new string[] { "http://localhost:5341/" };
-            var webApplication = new WebApplication(prefixos);
+            //Apenas um prefixo para nosso aplicação. Nosso servidor vai ouvir essa url.
+            var prefixos = new string[] { "http://localhost:8071/" };
+            var webApplication = new WebApplicationAlura(prefixos);
             webApplication.Iniciar();
+            Console.Write("Servidor Ativo");
         }
     }
 }

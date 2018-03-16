@@ -1,0 +1,7 @@
+D:\TI\ALURA\C#\Reflection\projeto\csharprefletiction\ByteBank.Portal\bin\Debug\ByteBank.Portal.exe.config
+D:\TI\ALURA\C#\Reflection\projeto\csharprefletiction\ByteBank.Portal\bin\Debug\ByteBank.Portal.exe
+D:\TI\ALURA\C#\Reflection\projeto\csharprefletiction\ByteBank.Portal\bin\Debug\ByteBank.Portal.pdb
+D:\TI\ALURA\C#\Reflection\projeto\csharprefletiction\ByteBank.Portal\obj\Debug\ByteBank.Portal.csprojResolveAssemblyReference.cache
+D:\TI\ALURA\C#\Reflection\projeto\csharprefletiction\ByteBank.Portal\obj\Debug\ByteBank.Portal.csproj.CoreCompileInputs.cache
+D:\TI\ALURA\C#\Reflection\projeto\csharprefletiction\ByteBank.Portal\obj\Debug\ByteBank.Portal.exe
+D:\TI\ALURA\C#\Reflection\projeto\csharprefletiction\ByteBank.Portal\obj\Debug\ByteBank.Portal.pdb
