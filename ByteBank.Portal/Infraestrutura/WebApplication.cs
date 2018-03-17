@@ -69,7 +69,7 @@ namespace ByteBank.Portal.Infraestrutura
             var respostaConteudoBytes = Encoding.UTF8.GetBytes(respostaConteudo);
 
             //AbsolutePath: indica qual diretorio a applicação esta tentando acessar
-            var path = requisicao.Url.AbsolutePath;
+            var path = requisicao.Url.PathAndQuery;
 
             if (Utilidades.EhArquivo(path))
             {

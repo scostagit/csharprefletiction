@@ -31,10 +31,10 @@ namespace ByteBank.Portal.Infraestrutura
             var controller = controllerWrapper.Unwrap();
 
             // var methodInfo = controller.GetType().GetMethod(action);
-            var methodInfo = this._actionBinder.ObterMethdoInfo(controller, path);
+            var methodInfo = this._actionBinder.ObterActionBindInfo(controller, path);
 
             //para invocar um metodo via reflection eu preciso informar a instande em que ele esta, e passar a lista de parametros
-             var resultadoAction = (string) methodInfo.Invoke(controller, new object[0]);
+             var resultadoAction = (string) methodInfo.Invoke(controller);
 
             var buffer = Encoding.UTF8.GetBytes(resultadoAction);
            
