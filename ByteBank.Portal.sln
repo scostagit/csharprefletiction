@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.9
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ByteBank.Portal", "ByteBank.Portal\ByteBank.Portal.csproj", "{59802278-1430-4639-BF96-41A659363F0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ByteBank.Service", "ByteBank.Service\ByteBank.Service.csproj", "{006EB864-0104-4330-B6C5-A42B0C46A139}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{59802278-1430-4639-BF96-41A659363F0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59802278-1430-4639-BF96-41A659363F0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59802278-1430-4639-BF96-41A659363F0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{006EB864-0104-4330-B6C5-A42B0C46A139}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{006EB864-0104-4330-B6C5-A42B0C46A139}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{006EB864-0104-4330-B6C5-A42B0C46A139}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{006EB864-0104-4330-B6C5-A42B0C46A139}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {79E777AD-A8E3-4324-843A-8E1909D60614}
 	EndGlobalSection
 EndGlobal

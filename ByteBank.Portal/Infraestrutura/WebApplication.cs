@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ByteBank.Portal.Controller;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -25,7 +26,7 @@ namespace ByteBank.Portal.Infraestrutura
 
             _prefixos = prefixos;
         }
-      
+
         public void Iniciar()
         {
             //looping infinito para ficar ouvindo diversas requisições.
@@ -59,8 +60,6 @@ namespace ByteBank.Portal.Infraestrutura
             //ojecto que representa nossa resposta
             var resposta = contexto.Response;
 
-
-
             //Nao podemos devolder um texto puro, isso nao vai rolar. Tenho que transformar minha string em um fluxo de bytes.
             //O objexto Stream e um fluxo de bytes:
             //Conteudo a ser devolvido.
@@ -69,58 +68,68 @@ namespace ByteBank.Portal.Infraestrutura
             //Transformando minha string em um array de bytes. Agora eu posso mandar esse array de bytes para nosso cliente para nossa rede.
             var respostaConteudoBytes = Encoding.UTF8.GetBytes(respostaConteudo);
 
-
             //AbsolutePath: indica qual diretorio a applicação esta tentando acessar
             var path = requisicao.Url.AbsolutePath;
 
-            if (path == "/Assets/css/style.css")
+            if (Utilidades.EhArquivo(path))
             {
-                resposta.ContentType = "text/css; charset=uf8";
                 //retornar  o nosso documento style.css
                 var assembly = Assembly.GetExecutingAssembly(); //retornar o assembly que fez a chamada (ele mesmo) o assembly a ser retornar é o byteBank
-                //vamos acessar o recurso do css. vc nao tem acesso ao texto puro. voce tem acesso ao stream.
-                var nomeResource = "ByteBank.Portal.Assets.css.styles.css";
+                                                                //vamos acessar o recurso do css. vc nao tem acesso ao texto puro. voce tem acesso ao stream.
+                var nomeResource = Utilidades.ConvertPathNomeAssembly(path);
                 var resourceStream = assembly.GetManifestResourceStream(nomeResource);
-                respostaConteudoBytes = new Byte[resourceStream.Length];
-                //vamos pegar os fluxo de dados da nossa mangueira para nosso baldinho(bytesResourse)
-                resourceStream.Read(respostaConteudoBytes, 0, (int)resourceStream.Length);
+
+                if (resourceStream == null)
+                {
+                    resposta.StatusCode = 404;
+                    resposta.OutputStream.Close();
+                }
+                else
+                {
+                    respostaConteudoBytes = new Byte[resourceStream.Length];
+                    //vamos pegar os fluxo de dados da nossa mangueira para nosso baldinho(bytesResourse)
+                    resourceStream.Read(respostaConteudoBytes, 0, (int)resourceStream.Length);
+
+                    resposta.ContentType = Utilidades.ObterTipoDeConteudo(path);
+
+                    //precisamos definir o status do codigo da requisição
+                    resposta.StatusCode = 200; //Sucesso
+
+                    //Informo ao IE, Chrome o tamnho de resposta que ele pode esperar
+                    resposta.ContentLength64 = respostaConteudoBytes.Length;
+
+                    //Vamos escrever nossa resposta http;
+                    resposta.OutputStream.Write(respostaConteudoBytes, 0, respostaConteudoBytes.Length);
+
+                    //precisamos fechar o fluxo
+                    resposta.OutputStream.Close();
+                }
 
             }
-            else if (path == "/Assets/js/main.js")
+            else if (path == "/Cambio/MXN")
             {
-                resposta.ContentType = "application/js; charset=uf8";
-                //reorno o nosso objecto do main.js
-                //retornar  o nosso documento style.css
-                var assembly = Assembly.GetExecutingAssembly(); //retornar o assembly que fez a chamada (ele mesmo) o assembly a ser retornar é o byteBank
-                //vamos acessar o recurso do css. vc nao tem acesso ao texto puro. voce tem acesso ao stream.
-                var nomeResource = "ByteBank.Portal.Assets.js.main.js";
-                var resourceStream = assembly.GetManifestResourceStream(nomeResource);
-                respostaConteudoBytes = new Byte[resourceStream.Length];
-                //vamos pegar os fluxo de dados da nossa mangueira para nosso baldinho(bytesResourse)
-                resourceStream.Read(respostaConteudoBytes, 0, (int)resourceStream.Length);
+                var controller = new CambioController();
+                var paginaConteudo = controller.MXN();
+                var bufferPagina = Encoding.UTF8.GetBytes(paginaConteudo);
+                resposta.OutputStream.Write(bufferPagina, 0, bufferPagina.Length);
+                resposta.StatusCode = 200;
+                resposta.ContentType = "text/html; charset=utf-8";
+                // resposta.ContentLength64 = bufferPagina.Length;
+                resposta.OutputStream.Close();
             }
-            else
+            else if (path == "/Cambio/USD")
             {
-                //Defino qual tipo de conteudo vamos devolver: pode ser Css, javscript ou HMTL. em nosso caso vamos devolver HTML.
-                resposta.ContentType = "text/html; charset=uf8";
+                var controller = new CambioController();
+                var paginaConteudo = controller.MXN();
+                var bufferPagina = Encoding.UTF8.GetBytes(paginaConteudo);
+                resposta.OutputStream.Write(bufferPagina, 0, bufferPagina.Length);
+                resposta.StatusCode = 200;
+                resposta.ContentType = "text/html; charset=utf-8";
+                // resposta.ContentLength64 = bufferPagina.Length;
+                resposta.OutputStream.Close();
             }
-
-
-            //precisamos definir o status do codigo da requisição
-            resposta.StatusCode = 200; //Sucesso
-
-            //Informo ao IE, Chrome o tamnho de resposta que ele pode esperar
-            resposta.ContentLength64 = respostaConteudoBytes.Length;
-
-            //Vamos escrever nossa resposta http;
-            resposta.OutputStream.Write(respostaConteudoBytes, 0, respostaConteudoBytes.Length);
-
-            //precisamos fechar o fluxo
-            resposta.OutputStream.Close();
 
             httpListener.Stop();
-
-
         }
 
         /*
