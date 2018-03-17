@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="Controller\CambioController.cs" />
     <Compile Include="Controller\ControllerBase.cs" />
+    <Compile Include="Infraestrutura\Binding\ActionBinder.cs" />
+    <Compile Include="Infraestrutura\Binding\ArgumentoNomeValor.cs" />
     <Compile Include="Infraestrutura\ManipuladorController.cs" />
     <Compile Include="Infraestrutura\ManipuladorRequisicaoArquivo.cs" />
     <Compile Include="Infraestrutura\Utilidades.cs" />
@@ -69,6 +71,9 @@
       <Project>{006eb864-0104-4330-b6c5-a42b0c46a139}</Project>
       <Name>ByteBank.Service</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="View\Cambio\Calculo.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
