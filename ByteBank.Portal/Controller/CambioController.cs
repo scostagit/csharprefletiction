@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ByteBank.Portal.Controller
 {
-    public class CambioController
+    public class CambioController: ControllerBase
     {
         private ICambioService _cambioService;
         public CambioController()
@@ -21,19 +21,7 @@ namespace ByteBank.Portal.Controller
         {
             var valorFinal = this._cambioService.Calcular("MXN", "BRL", 1);
 
-            //Pego o meu recurso no assemblu
-            var nomeCompletoResource = "ByteBank.Portal.View.Cambio.MXN.html";
-            var assembly = Assembly.GetExecutingAssembly();
-
-            //Ele me retorna o stream
-            var streamRecurso = assembly.GetManifestResourceStream(nomeCompletoResource);
-
-            //Eu tranformo esse stream em string.
-            var streamLeitura = new StreamReader(streamRecurso);
-
-            //Agora eu tenho o valor em string, agora posso manipular esse texto injetnado o valor da variavel valorFinal.
-            var textoPagina = streamLeitura.ReadToEnd();
-
+            var textoPagina = View();
             var textoResultado = textoPagina.Replace("VALOR_EM_REAIS", valorFinal.ToString());
 
             return textoResultado;
@@ -44,19 +32,7 @@ namespace ByteBank.Portal.Controller
         {
             var valorFinal = this._cambioService.Calcular("USD", "BRL", 1);
 
-            //Pego o meu recurso no assemblu
-            var nomeCompletoResource = "ByteBank.Portal.View.Cambio.USD.html";
-            var assembly = Assembly.GetExecutingAssembly();
-
-            //Ele me retorna o stream
-            var streamRecurso = assembly.GetManifestResourceStream(nomeCompletoResource);
-
-            //Eu tranformo esse stream em string.
-            var streamLeitura = new StreamReader(streamRecurso);
-
-            //Agora eu tenho o valor em string, agora posso manipular esse texto injetnado o valor da variavel valorFinal.
-            var textoPagina = streamLeitura.ReadToEnd();
-
+            var textoPagina = View();
             var textoResultado = textoPagina.Replace("VALOR_EM_REAIS", valorFinal.ToString());
 
             return textoResultado;

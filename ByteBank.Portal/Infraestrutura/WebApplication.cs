@@ -73,60 +73,14 @@ namespace ByteBank.Portal.Infraestrutura
 
             if (Utilidades.EhArquivo(path))
             {
-                //retornar  o nosso documento style.css
-                var assembly = Assembly.GetExecutingAssembly(); //retornar o assembly que fez a chamada (ele mesmo) o assembly a ser retornar é o byteBank
-                                                                //vamos acessar o recurso do css. vc nao tem acesso ao texto puro. voce tem acesso ao stream.
-                var nomeResource = Utilidades.ConvertPathNomeAssembly(path);
-                var resourceStream = assembly.GetManifestResourceStream(nomeResource);
+                var manipulardor = new ManipuladorRequisicaoArquivo();
 
-                if (resourceStream == null)
-                {
-                    resposta.StatusCode = 404;
-                    resposta.OutputStream.Close();
-                }
-                else
-                {
-                    respostaConteudoBytes = new Byte[resourceStream.Length];
-                    //vamos pegar os fluxo de dados da nossa mangueira para nosso baldinho(bytesResourse)
-                    resourceStream.Read(respostaConteudoBytes, 0, (int)resourceStream.Length);
-
-                    resposta.ContentType = Utilidades.ObterTipoDeConteudo(path);
-
-                    //precisamos definir o status do codigo da requisição
-                    resposta.StatusCode = 200; //Sucesso
-
-                    //Informo ao IE, Chrome o tamnho de resposta que ele pode esperar
-                    resposta.ContentLength64 = respostaConteudoBytes.Length;
-
-                    //Vamos escrever nossa resposta http;
-                    resposta.OutputStream.Write(respostaConteudoBytes, 0, respostaConteudoBytes.Length);
-
-                    //precisamos fechar o fluxo
-                    resposta.OutputStream.Close();
-                }
-
+                manipulardor.Manipular(resposta, path);
             }
-            else if (path == "/Cambio/MXN")
+            else
             {
-                var controller = new CambioController();
-                var paginaConteudo = controller.MXN();
-                var bufferPagina = Encoding.UTF8.GetBytes(paginaConteudo);
-                resposta.OutputStream.Write(bufferPagina, 0, bufferPagina.Length);
-                resposta.StatusCode = 200;
-                resposta.ContentType = "text/html; charset=utf-8";
-                // resposta.ContentLength64 = bufferPagina.Length;
-                resposta.OutputStream.Close();
-            }
-            else if (path == "/Cambio/USD")
-            {
-                var controller = new CambioController();
-                var paginaConteudo = controller.MXN();
-                var bufferPagina = Encoding.UTF8.GetBytes(paginaConteudo);
-                resposta.OutputStream.Write(bufferPagina, 0, bufferPagina.Length);
-                resposta.StatusCode = 200;
-                resposta.ContentType = "text/html; charset=utf-8";
-                // resposta.ContentLength64 = bufferPagina.Length;
-                resposta.OutputStream.Close();
+                var manipuladorController = new ManipuladorController();
+                manipuladorController.Manipular(resposta, path);
             }
 
             httpListener.Stop();
