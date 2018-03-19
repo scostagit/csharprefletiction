@@ -1,4 +1,5 @@
-﻿using ByteBank.Service;
+﻿using ByteBank.Portal.Model;
+using ByteBank.Service;
 using ByteBank.Service.Cambio;
 using System;
 using System.Collections.Generic;
@@ -42,13 +43,16 @@ namespace ByteBank.Portal.Controller
         {
             var valorFinal =  this._cambioService.Calcular(moedaOrigem, moedaDestino, valor);
 
-            var textoPagina = View();
-            var textoResultado = textoPagina.Replace("VALOR_MOEDA_ORIGEM", valor.ToString())
-                                            .Replace("MOEDA_ORIGEM", moedaOrigem)
-                                            .Replace("VALOR_MOEDA_DESTINO", valorFinal.ToString())
-                                            .Replace("MOEDA_DESTINO", moedaDestino);
-
-            return textoResultado;
+            
+            //Quando eu crio um objeto sem parenteses e com chaves é chamado de auto Initialzer
+            var modelo = new CalculoCambioModel {
+                ValorOrigem = valor,
+                ValorFinal = valorFinal,
+                MoedaDestino = moedaDestino,
+                MoedaOrigem  = moedaOrigem
+            };
+       
+            return View(modelo);
         }
 
         public string Calculo(string moedaDestino, decimal valor) => Calculo("BRL", moedaDestino, valor);

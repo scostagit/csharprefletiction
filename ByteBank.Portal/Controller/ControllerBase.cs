@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ByteBank.Portal.Controller
@@ -30,7 +31,8 @@ namespace ByteBank.Portal.Controller
            CallerMemberNameAttribute	
            Nome do método ou da propriedade do chamador. Consulte Nomes dos membros mais adiante neste tópico.
          */
-        protected string View([CallerMemberName]string  nomeArquivo = null) {
+        protected string View([CallerMemberName]string nomeArquivo = null)
+        {
 
             var type = GetType();
             var diretorioNome = type.Name.Replace("Controller", string.Empty);
@@ -49,6 +51,52 @@ namespace ByteBank.Portal.Controller
             var textoPagina = streamLeitura.ReadToEnd();
 
             return textoPagina;
+        }
+
+        protected string View(object modelo, [CallerMemberName]string nomeArquivo = null)
+        {
+            // Usamos a outra sobrecarga deste método para recuperarmos o conteúdo
+            // bruto de nossa view.
+            var viewBruta = this.View(nomeArquivo);
+
+            // Recuperamos todas as propriedades do modelo.
+            var todasAsProprieadesDoModelo = modelo.GetType().GetProperties();
+
+            // Criamos nossa expressão regular para  obter  os  valores  inseridos
+            // entre um par de chaves duplas, como {{prop_1}} ou {{prop_2}}.
+            var regex = new Regex("\\{{(.*?)\\}}");
+
+
+            // O  método   Regex::Replace(string, MatchEvaluator)  executa   o
+            // delegate  MatchEvaluator  para   cada   Match   encontrado   na
+            // ViewBruta e substitui seu valor de  acordo  com  o  retorno  de
+            // nossa expressão lambda.
+            var viewProcessada = regex.Replace(viewBruta, (match) =>
+            {
+                // Verificamos com a ajuda do LinqPAD que o nome da propriedade
+                // é acessível à partir do valor  do  segundo  grupo  de  nosso 
+                // match.
+                var nomeProprieade = match.Groups[1].Value;
+
+                // Operamos nossa lista de todas as propriedades do modelo usando
+                // o operador linq Single com segurança, pois sabemos  que  todas
+                // as classes possuem propriedades com  nomes  únicos,  ou  seja,
+                // os nomes de propriedades não se repetem.
+                var propriedade = todasAsProprieadesDoModelo.Single(prop => prop.Name.Equals(nomeProprieade));
+
+                // Com nosso PropertyInfo em mãos, basta  executarmos   o  método
+                // PropertyInfo::GetValue(object) usando como argumento o  modelo
+                // recebido em nossa nova sobrecarga View(object, string).
+
+                // O delegate MatchEvaluator exige  como tipo  de retorno  uma
+                // string. Como medida de  segurança,  usamos  o  null-coalescing
+                // operator   para   não   termos    uma    exceção    do    tipo
+                // NullReferenceException.
+                return propriedade.GetValue(modelo)?.ToString();   //Null propagator operator expetion. Se o ojeto prorpriedate for nullo ele nao fara o toString.             
+            });
+
+            // Enfim, retornamos nossa view processada!
+            return viewProcessada;
         }
     }
 }
