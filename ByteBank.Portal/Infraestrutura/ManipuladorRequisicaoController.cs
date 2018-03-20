@@ -1,4 +1,5 @@
 ﻿using ByteBank.Portal.Infraestrutura.Binding;
+using ByteBank.Portal.Infraestrutura.Filtros;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace ByteBank.Portal.Infraestrutura
 {
-    public class ManipuladorController
+    public class ManipuladorRequisicaoController
     {
         private readonly ActionBinder _actionBinder = new ActionBinder();
+        private readonly FilterResolver _filterResolver = new FilterResolver();
 
         public void Manipular(HttpListenerResponse resposta, string path)
         {
@@ -31,19 +33,32 @@ namespace ByteBank.Portal.Infraestrutura
             var controller = controllerWrapper.Unwrap();
 
             // var methodInfo = controller.GetType().GetMethod(action);
-            var methodInfo = this._actionBinder.ObterActionBindInfo(controller, path);
+            var actionBindInfo = this._actionBinder.ObterActionBindInfo(controller, path);
 
-            //para invocar um metodo via reflection eu preciso informar a instande em que ele esta, e passar a lista de parametros
-             var resultadoAction = (string) methodInfo.Invoke(controller);
 
-            var buffer = Encoding.UTF8.GetBytes(resultadoAction);
-           
-            resposta.StatusCode = 200;
-            resposta.ContentType = "text/html; charset=utf-8";
-            resposta.ContentLength64 = resultadoAction.Length;
+            var filterResult = this._filterResolver.VerificarFiltros(actionBindInfo);
 
-            resposta.OutputStream.Write(buffer, 0, buffer.Length);
-            resposta.OutputStream.Close();
+
+            if (filterResult.PoderContinuar)
+            {
+                //para invocar um metodo via reflection eu preciso informar a instande em que ele esta, e passar a lista de parametros
+                var resultadoAction = (string)actionBindInfo.Invoke(controller);
+
+                var buffer = Encoding.UTF8.GetBytes(resultadoAction);
+
+                resposta.StatusCode = 200;
+                resposta.ContentType = "text/html; charset=utf-8";
+                resposta.ContentLength64 = resultadoAction.Length;
+                resposta.OutputStream.Write(buffer, 0, buffer.Length);
+                resposta.OutputStream.Close();
+
+            }
+            else
+            {
+                resposta.StatusCode = 307;
+                resposta.RedirectLocation = "/Erro/Inesperado";
+                resposta.OutputStream.Close();
+            }          
         }
     }
 }

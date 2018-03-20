@@ -1,6 +1,8 @@
-﻿using ByteBank.Portal.Model;
+﻿//using ByteBank.Portal.Model;
 using ByteBank.Service;
 using ByteBank.Service.Cambio;
+using ByteBank.Portal.Filtros;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,45 +20,66 @@ namespace ByteBank.Portal.Controller
         {
             _cambioService = new CambioTestService();
         }
+
+        [ApenasHorarioComercialFilterAttibute]
         public string MXN()
         {
-            var valorFinal = this._cambioService.Calcular("MXN", "BRL", 1);
-
-            var textoPagina = View();
-            var textoResultado = textoPagina.Replace("VALOR_EM_REAIS", valorFinal.ToString());
-
-            return textoResultado;
+            return View(new {
+                Valor = this._cambioService.Calcular("MXN", "BRL", 1)
+            });
         }
 
-
+        [ApenasHorarioComercialFilterAttibute]
         public string USD()
-        {
-            var valorFinal = this._cambioService.Calcular("USD", "BRL", 1);
-
-            var textoPagina = View();
-            var textoResultado = textoPagina.Replace("VALOR_EM_REAIS", valorFinal.ToString());
-
-            return textoResultado;
+        {         
+            return View(new
+            {
+                Valor = this._cambioService.Calcular("USD", "BRL", 1)
+            });
         }
 
+        [ApenasHorarioComercialFilterAttibute]
+        public string Calculo(string moedaDestino) => Calculo("BRL", moedaDestino, 1);
+
+        [ApenasHorarioComercialFilterAttibute]
+        public string Calculo(string moedaDestino, decimal valor) => Calculo("BRL", moedaDestino, valor);
+
+        [ApenasHorarioComercialFilterAttibute]
         public string Calculo(string moedaOrigem, string moedaDestino, decimal valor)
         {
-            var valorFinal =  this._cambioService.Calcular(moedaOrigem, moedaDestino, valor);
+            var valorFinal = this._cambioService.Calcular(moedaOrigem, moedaDestino, valor);
 
-            
+
             //Quando eu crio um objeto sem parenteses e com chaves é chamado de auto Initialzer
-            var modelo = new CalculoCambioModel {
+            var modelo = new
+            {
                 ValorOrigem = valor,
                 ValorFinal = valorFinal,
                 MoedaDestino = moedaDestino,
-                MoedaOrigem  = moedaOrigem
+                MoedaOrigem = moedaOrigem
             };
-       
+
             return View(modelo);
         }
-
-        public string Calculo(string moedaDestino, decimal valor) => Calculo("BRL", moedaDestino, valor);
-
-        public string Calculo(string moedaDestino) => Calculo("BRL", moedaDestino, 1);
     }
 }
+
+/*
+ * O compilador do C#, trata um tipo anônimo como um tipo normal. 
+ * Em tempo de compilação, ele traduz a sintaxe que usamos para criar tipo anônimos para uma classe tradicional 
+ * e esta possui todas as características - do ponto de vista de Reflection - que uma classe normal.
+
+ 
+   Correta! Este tipo de recurso da linguagem também é conhecida como syntax-sugar, 
+   onde uma sintaxe é usada somente para simplificar construções mais complexas que são criadas automaticamente pelo compilador.
+
+    var tipoQualquer = new {
+        Prop1 = 1,
+        prop2= "Test"
+
+        };
+
+
+    tipoQualquer.GetType().GetProperties();
+
+ */

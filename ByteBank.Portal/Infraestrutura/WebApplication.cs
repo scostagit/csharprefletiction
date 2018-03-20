@@ -79,7 +79,7 @@ namespace ByteBank.Portal.Infraestrutura
             }
             else
             {
-                var manipuladorController = new ManipuladorController();
+                var manipuladorController = new ManipuladorRequisicaoController();
                 manipuladorController.Manipular(resposta, path);
             }
 
