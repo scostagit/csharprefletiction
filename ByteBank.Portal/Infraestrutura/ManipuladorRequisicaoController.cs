@@ -48,7 +48,7 @@ namespace ByteBank.Portal.Infraestrutura
 
                 resposta.StatusCode = 200;
                 resposta.ContentType = "text/html; charset=utf-8";
-                resposta.ContentLength64 = resultadoAction.Length;
+                resposta.ContentLength64 = resultadoAction.Length;               
                 resposta.OutputStream.Write(buffer, 0, buffer.Length);
                 resposta.OutputStream.Close();
 

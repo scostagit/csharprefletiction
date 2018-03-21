@@ -10,15 +10,19 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using ByteBank.Service.Cartao;
 
 namespace ByteBank.Portal.Controller
 {
     public class CambioController: ControllerBase
     {
         private ICambioService _cambioService;
-        public CambioController()
+        private ICartaoService _cartaoService;
+
+        public CambioController(ICambioService cambioService, ICartaoService cartaoService)
         {
-            _cambioService = new CambioTestService();
+            _cambioService = cambioService;
+            _cartaoService = cartaoService;
         }
 
         [ApenasHorarioComercialFilterAttibute]
@@ -49,6 +53,7 @@ namespace ByteBank.Portal.Controller
         {
             var valorFinal = this._cambioService.Calcular(moedaOrigem, moedaDestino, valor);
 
+            var cartaoPromocao = this._cartaoService.ObterCartaoDeCreditoDeDestaque();
 
             //Quando eu crio um objeto sem parenteses e com chaves é chamado de auto Initialzer
             var modelo = new
@@ -56,7 +61,8 @@ namespace ByteBank.Portal.Controller
                 ValorOrigem = valor,
                 ValorFinal = valorFinal,
                 MoedaDestino = moedaDestino,
-                MoedaOrigem = moedaOrigem
+                MoedaOrigem = moedaOrigem,
+                CartaoPromocao = cartaoPromocao
             };
 
             return View(modelo);

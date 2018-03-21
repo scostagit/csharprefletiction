@@ -11,9 +11,11 @@ namespace ByteBank.Portal.Filtros
     {
         public override bool PodeContinuar()
         {
-            var hora = DateTime.Now.Hour;
+            //var hora = DateTime.Now.Hour;
 
-            return hora >= 9 && hora < 16;
+            //return hora >= 9 && hora < 16;
+
+            return true;
         }
     }
 }

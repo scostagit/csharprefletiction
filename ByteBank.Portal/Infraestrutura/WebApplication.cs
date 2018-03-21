@@ -55,7 +55,7 @@ namespace ByteBank.Portal.Infraestrutura
 
             //preciso de dois objetos. um de resposta e um de requisição.
             //objecto que representa nossa requisição
-            var requisicao = contexto.Request;
+            var requisicao = contexto.Request;           
 
             //ojecto que representa nossa resposta
             var resposta = contexto.Response;
