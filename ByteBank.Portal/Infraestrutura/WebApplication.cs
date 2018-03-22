@@ -1,4 +1,8 @@
 ﻿using ByteBank.Portal.Controller;
+using ByteBank.Portal.Infraestrutura.IoC;
+using ByteBank.Service;
+using ByteBank.Service.Cambio;
+using ByteBank.Service.Cartao;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +16,7 @@ namespace ByteBank.Portal.Infraestrutura
     public class WebApplicationAlura
     {
         private readonly string[] _prefixos;
+        private readonly IContainer _container = new ContainerSimples();
 
         /// <summary>
         /// Prefixo: URL que irão ser ouvidas pelo nossso httplistener
@@ -25,6 +30,8 @@ namespace ByteBank.Portal.Infraestrutura
 
 
             _prefixos = prefixos;
+
+            this.Configurar();
         }
 
         public void Iniciar()
@@ -32,6 +39,13 @@ namespace ByteBank.Portal.Infraestrutura
             //looping infinito para ficar ouvindo diversas requisições.
             while (true)
                 ManipularRequisicao();
+        }
+
+        private void Configurar()
+        {
+            this._container.Registrar(typeof(ICambioService), typeof(CambioTestService));
+            this._container.Registrar(typeof(ICartaoService), typeof(CartaoService));
+    
         }
 
         private void ManipularRequisicao()
@@ -79,7 +93,7 @@ namespace ByteBank.Portal.Infraestrutura
             }
             else
             {
-                var manipuladorController = new ManipuladorRequisicaoController();
+                var manipuladorController = new ManipuladorRequisicaoController(this._container);
                 manipuladorController.Manipular(resposta, path);
             }
 

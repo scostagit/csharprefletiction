@@ -52,6 +52,7 @@
     <Compile Include="Infraestrutura\Binding\ActionBinder.cs" />
     <Compile Include="Infraestrutura\Binding\ActionBindingInfo.cs" />
     <Compile Include="Infraestrutura\Binding\ArgumentoNomeValor.cs" />
+    <Compile Include="Infraestrutura\ControllerResolver.cs" />
     <Compile Include="Infraestrutura\Filtros\FilterResolver.cs" />
     <Compile Include="Infraestrutura\Filtros\FilterResult.cs" />
     <Compile Include="Infraestrutura\IoC\ContainerSimples.cs" />

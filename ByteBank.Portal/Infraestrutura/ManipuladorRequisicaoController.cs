@@ -1,5 +1,6 @@
 ﻿using ByteBank.Portal.Infraestrutura.Binding;
 using ByteBank.Portal.Infraestrutura.Filtros;
+using ByteBank.Portal.Infraestrutura.IoC;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,14 @@ namespace ByteBank.Portal.Infraestrutura
 {
     public class ManipuladorRequisicaoController
     {
+        private readonly ControllerResolver _controllerResolver;
         private readonly ActionBinder _actionBinder = new ActionBinder();
         private readonly FilterResolver _filterResolver = new FilterResolver();
+
+        public ManipuladorRequisicaoController(IContainer container)
+        {
+            this._controllerResolver = new ControllerResolver(container);
+        }
 
         public void Manipular(HttpListenerResponse resposta, string path)
         {
@@ -22,7 +29,7 @@ namespace ByteBank.Portal.Infraestrutura
             var controllerNomeCompleto = $"ByteBank.Portal.Controller.{controllerNome}Controller";
 
             //Activator: voce consegue criar object pelo nome.
-            var controllerWrapper = Activator.CreateInstance("ByteBank.Portal", controllerNomeCompleto, new object[0]);
+            // var controllerWrapper = Activator.CreateInstance("ByteBank.Portal", controllerNomeCompleto, new object[0]);
 
             /*
              * O método Activator::CreateInstance pode ser usado para criar objetos em um AppDomain diferente de nosso código em execução e a 
@@ -30,7 +37,8 @@ namespace ByteBank.Portal.Infraestrutura
              * 
              * Correta! Com o Activator, os objetos criados são encapsulados em um ObjectHandle.
              */
-            var controller = controllerWrapper.Unwrap();
+            //var controller = controllerWrapper.Unwrap();
+            var controller = this._controllerResolver.ObterController(controllerNomeCompleto);
 
             // var methodInfo = controller.GetType().GetMethod(action);
             var actionBindInfo = this._actionBinder.ObterActionBindInfo(controller, path);

@@ -55,9 +55,51 @@ namespace ByteBank.Portal.Infraestrutura.IoC
             }
         }
 
+        //estamos recuperamndo uma instancai de tipo origem
         public object Recuperar(Type tipoOrigem)
         {
-            throw new NotImplementedException();
+            //vamos verifcar se eu tenho o tipo origem mapeando
+            var tipoOrigemMapeado = this._mapaDeTipos.ContainsKey(tipoOrigem);
+            if (tipoOrigemMapeado) {
+                //Recupera do tipoOrigem para esse tipoDestino
+                var tipoDestino = this._mapaDeTipos[tipoOrigem];
+                //agora tenho o tipodestino preciso recperar ele.
+                //vamos chamar recursivamente 
+                return Recuperar(tipoDestino);
+            }
+
+            //precisamos recuperar os construturoes
+            var construstores = tipoOrigem.GetConstructors(); //GetConstructors: Nao garante a ordem dos construtores.
+
+            //Recuperar o construtor sem parametro.
+            var construtorSemPrametro = 
+                construstores.FirstOrDefault(construtor => construtor.GetParameters().Any() == false);
+
+            if (construtorSemPrametro != null)
+            {
+                //passando o paramtros vazios. O retorno do Invoce é um object. Sendo assim podemos retorna-lo.
+                var instancia = construtorSemPrametro.Invoke(new object[0]);
+
+                return instancia;
+            }
+
+            //Se estamos aqui é porque nao temos contrustruroes sem parametros.
+            //Pega o primeiro construtor com parametro.
+            var construtorQueVamosUsar = construstores[0];
+            var parametrosDoConstrutor = construtorQueVamosUsar.GetParameters();
+            var valoresDeParamtros = new object[parametrosDoConstrutor.Count()];
+
+            for (int i = 0; i < parametrosDoConstrutor.Count(); i++)
+            {
+                var parametro = parametrosDoConstrutor[i];
+                var tipoParametros = parametro.ParameterType;
+
+                valoresDeParamtros[i] = Recuperar(tipoParametros);
+            }
+
+            var instanciaDeConstrutorSemParametro = construtorQueVamosUsar.Invoke(valoresDeParamtros);
+            return instanciaDeConstrutorSemParametro;
+           
         }
     }
 }
