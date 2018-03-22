@@ -23,6 +23,15 @@ namespace ByteBank.Portal.Infraestrutura.IoC
             _mapaDeTipos.Add(tipoOrigem, tipoDestino);
         }
 
+        public void Registrar<TOrigem, TDestino>() where TDestino : TOrigem
+        {
+            if (_mapaDeTipos.ContainsKey(typeof(TOrigem)))
+                throw new InvalidOperationException("Tipo já mapeado!");
+
+            _mapaDeTipos.Add(typeof(TOrigem), typeof(TDestino));
+        }
+
+
         // Verificar se tipoDestino herda ou implementa tipoOrigem
         private void VerificarHierarquiaOuLancarExcecao(Type tipoOrigem, Type tipoDestino)
         {
@@ -55,6 +64,7 @@ namespace ByteBank.Portal.Infraestrutura.IoC
             }
         }
 
+      
         //estamos recuperamndo uma instancai de tipo origem
         public object Recuperar(Type tipoOrigem)
         {
@@ -101,6 +111,7 @@ namespace ByteBank.Portal.Infraestrutura.IoC
             return instanciaDeConstrutorSemParametro;
            
         }
+       
     }
 }
 

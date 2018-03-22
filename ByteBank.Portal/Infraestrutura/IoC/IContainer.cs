@@ -21,6 +21,8 @@ namespace ByteBank.Portal.Infraestrutura.IoC
         //Metodo para registrar as intancias.
         void Registrar(Type tipoOrigem, Type TipoDestino);
 
+        void Registrar<TOrigem, TDestino>() where TDestino: TOrigem;
+
         //metodo para recuperar o tipo
         object Recuperar(Type tipoOrigem);
     }
